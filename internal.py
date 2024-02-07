@@ -76,21 +76,10 @@ def setup_example_2(workdir, repodir, builddir):
     if ret:
         raise Exception(f'Failed to clone CAPD example 2 repository (error code: {ret})')
 
-    trace.debug('CAPD example 2 submodules updating...')
-    ret = subprocess.call(['git', 'submodule', 'update', '--init', '--recursive'], cwd=repodir)
+    trace.debug('CAPD example 2 building with build.sh ...')
+    ret = subprocess.call(['./build.sh'], cwd=repodir)
     if ret:
         raise Exception(f'Failed to update git submodules for CAPD example 2 (error code: {ret})')
-
-    trace.debug('Configuring the example 2...')
-    ret = subprocess.call(['cmake', '-S', repodir, '-B', builddir,
-                           '-DCAPD_ENABLE_MULTIPRECISION=OFF'])
-    if ret:
-        raise Exception(f'Failed to configure CAPD example 2 (error code: {ret})')
-
-    trace.debug('Building the example 2...')
-    ret = subprocess.call(['make', '-j', str(4)], cwd=builddir)
-    if ret:
-        raise Exception(f'Failed to build CAPD example 2 (error code: {ret})')
 
     trace.debug('Executing example 2 app...')
     ret = subprocess.call(['./capd_example'], cwd=builddir)
