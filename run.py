@@ -1,8 +1,10 @@
 import logging
+import os
 
 from internal import setup_library
 from internal import setup_example_1
 from internal import setup_example_2
+from internal import setup_project_starter
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,3 +24,6 @@ example2_dir = f'{workdir}/CAPD.example.2'
 example2_builddir = f'{example2_dir}/build'
 
 setup_example_2(workdir, example2_dir, example2_builddir)
+
+project_starter_dir = f'{capddir}/capdMake/examples/projectStarter'
+setup_project_starter(project_starter_dir)

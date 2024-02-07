@@ -85,3 +85,17 @@ def setup_example_2(workdir, repodir, builddir):
     ret = subprocess.call(['./capd_example'], cwd=builddir)
     if ret:
         raise Exception(f'CAPD example 2 execution failed (error code: {ret})')
+
+
+def setup_project_starter(repodir):
+
+    trace.debug('Building project starter...')
+    ret = subprocess.call(['make'], cwd=repodir)
+    if ret:
+        raise Exception(f'Failed to build project starter (error code: {ret})')
+    
+    trace.debug('Executing project starter app...')
+    ret = subprocess.call(['./MyProgram'], cwd=repodir)
+    if ret:
+        raise Exception(f'Project starter execution failed (error code: {ret})')
+    
