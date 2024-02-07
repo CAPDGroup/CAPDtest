@@ -24,7 +24,6 @@ def setup_library(workdir, repodir, builddir, installdir):
     trace.debug('Configuring the library...')
     trace.debug(f'CAPD installation path: {installdir}')
     ret = subprocess.call(['cmake', '-S', repodir, '-B', builddir,
-                        '-DCAPD_ENABLE_MULTIPRECISION=ON',
                         '-DCAPD_BUILD_ALL=ON',
                         f'-DCMAKE_INSTALL_PREFIX={installdir}'])
     if ret:
@@ -53,18 +52,47 @@ def setup_example_1(workdir, repodir, builddir, installdir):
     if ret:
         raise Exception(f'Failed to clone CAPD example 1 repository (error code: {ret})')
 
-    trace.debug('Configuring the example...')
+    trace.debug('Configuring the example 1...')
     ret = subprocess.call(['cmake', '-S', repodir, '-B', builddir,
                         f'-DCMAKE_PREFIX_PATH={installdir}'])
     if ret:
-        raise Exception(f'Failed to configure CAPD example (error code: {ret})')
+        raise Exception(f'Failed to configure CAPD example 1 (error code: {ret})')
 
-    trace.debug('Building the example...')
+    trace.debug('Building the example 1...')
     ret = subprocess.call(['make', '-j', str(4)], cwd=builddir)
     if ret:
-        raise Exception(f'Failed to build CAPD example (error code: {ret})')
+        raise Exception(f'Failed to build CAPD example 1 (error code: {ret})')
 
-    trace.debug('Executing example app...')
+    trace.debug('Executing example 1 app...')
     ret = subprocess.call(['./capd_example'], cwd=builddir)
     if ret:
-        raise Exception(f'CAPD example execution failed (error code: {ret})')
+        raise Exception(f'CAPD example 1 execution failed (error code: {ret})')
+
+
+def setup_example_2(workdir, repodir, builddir):
+
+    trace.debug('Cloning CAPD example 2 repository...')
+    ret = subprocess.call(['git', 'clone', 'https://github.com/CAPDGroup/CAPD.example.2'], cwd=workdir)
+    if ret:
+        raise Exception(f'Failed to clone CAPD example 2 repository (error code: {ret})')
+
+    trace.debug('CAPD example 2 submodules updating...')
+    ret = subprocess.call(['git', 'submodule', 'update', '--init', '--recursive'], cwd=repodir)
+    if ret:
+        raise Exception(f'Failed to update git submodules for CAPD example 2 (error code: {ret})')
+
+    trace.debug('Configuring the example 2...')
+    ret = subprocess.call(['cmake', '-S', repodir, '-B', builddir,
+                           '-DCAPD_ENABLE_MULTIPRECISION=OFF'])
+    if ret:
+        raise Exception(f'Failed to configure CAPD example 2 (error code: {ret})')
+
+    trace.debug('Building the example 2...')
+    ret = subprocess.call(['make', '-j', str(4)], cwd=builddir)
+    if ret:
+        raise Exception(f'Failed to build CAPD example 2 (error code: {ret})')
+
+    trace.debug('Executing example 2 app...')
+    ret = subprocess.call(['./capd_example'], cwd=builddir)
+    if ret:
+        raise Exception(f'CAPD example 2 execution failed (error code: {ret})')
