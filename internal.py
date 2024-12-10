@@ -32,15 +32,6 @@ def __run_command_with_trace(
         raise Exception(f'{error_message} (error code: {ret})')
 
 
-def run_command(args : List[str], cwd : str, config : dict):
-    if not config["dry_run"]:
-        subprocess.call(args, cwd=cwd)
-    else:
-        trace.info('Run command:\n' +
-                   '\t' + ' '.join(args) + '\n' +
-                   '\t' + f'cwd={cwd}\n')
-
-
 def setup_workdir(config):
 
     workdir = os.path.abspath( config['root'] )
@@ -148,96 +139,6 @@ def execute_stage_executable(
         error_message='Execution failed')
 
 
-def setup_library(config : dict):
-
-    target_config = config["targets"]["CAPD"]
-
-    if target_config['enabled']:
-        trace.info(f'Building target: {target_config["desc"]} ...')
-
-        workdir = os.path.abspath(config['root'])
-        repodir = f'{workdir}/{target_config["local_url"]}'
-        builddir = f'{repodir}/{config["builddir"]}'
-        installdir = f'{workdir}/{config["installdir"]}'
-        jobs = str(config['jobs'])
-        dry_run = config['dry_run']
-
-        remote_url = target_config["remote_url"]
-
-        trace.debug(f'CAPD installation path: {installdir}')
-
-        execute_stage_library(
-            workspace_root=workdir,
-            remote_url=remote_url,
-            local_url=repodir,
-            build_dir=builddir,
-            cmake_options=['-DCAPD_BUILD_ALL=ON', f'-DCMAKE_INSTALL_PREFIX={installdir}'],
-            jobs=jobs,
-            dry_run=dry_run)
-
-    else:
-        trace.info(f'Skipping target: {target_config["desc"]} ...')
-
-
-def setup_example_1(config : dict):
-
-    target_config = config["targets"]["CAPD_standalone"]
-
-    if target_config['enabled']:
-        trace.info(f'Building target: {target_config["desc"]} ...')
-
-        workdir = os.path.abspath(config['root'])
-        repodir = f'{workdir}/{target_config["local_url"]}'
-        builddir = f'{repodir}/{config["builddir"]}'
-        jobs = str(config["jobs"])
-        dry_run = config['dry_run']
-
-        remote_url = target_config["remote_url"]
-
-        execute_stage_executable(
-            workspace_root=workdir,
-            remote_url=remote_url,
-            local_url=repodir,
-            build_dir=builddir,
-            cmake_options=[],
-            executable_args=['./capd_example'],
-            jobs=jobs,
-            dry_run=dry_run)
-
-    else:
-        trace.info(f'Skipping target: {target_config["desc"]} ...')
-
-
-def setup_example_2(config : dict):
-
-    target_config = config["targets"]["CAPD_standard"]
-
-    if target_config['enabled']:
-        trace.info(f'Building target: {target_config["desc"]} ...')
-
-        workdir = os.path.abspath(config['root'])
-        repodir = f'{workdir}/{target_config["local_url"]}'
-        builddir = f'{repodir}/{config["builddir"]}'
-        installdir = f'{workdir}/{config["installdir"]}'
-        jobs = str(config["jobs"])
-        dry_run = config['dry_run']
-
-        remote_url = target_config["remote_url"]
-        
-        execute_stage_executable(
-            workspace_root=workdir,
-            remote_url=remote_url,
-            local_url=repodir,
-            build_dir=builddir,
-            cmake_options=[f'-DCMAKE_PREFIX_PATH={installdir}'],
-            executable_args=['./capd_example'],
-            jobs=jobs,
-            dry_run=dry_run)
-    
-    else:
-        trace.info(f'Skipping target: {target_config["desc"]} ...')
-
-
 def setup_project_starter(project_starter_dir : str, config : dict):
 
     target_config = config["targets"]["CAPD_projectstarter"]
@@ -245,15 +146,19 @@ def setup_project_starter(project_starter_dir : str, config : dict):
     if target_config['enabled']:
         trace.info(f'Building target: {target_config["desc"]} ...')
 
-        trace.debug('Building project starter...')
-        ret = run_command(['make'], project_starter_dir, config)
-        if ret:
-            raise Exception(f'Failed to build project starter (error code: {ret})')
+        __run_command_with_trace(
+            args=['make'],
+            cwd=project_starter_dir,
+            dry_run=config['dry_run'],
+            debug_message='Building project starter...',
+            error_message='Failed to build project starter')
+
+        __run_command_with_trace(
+            args=['./MyProgram'],
+            cwd=project_starter_dir,
+            dry_run=config['dry_run'],
+            debug_message='Executing project starter app...',
+            error_message='Project starter execution failed')
         
-        trace.debug('Executing project starter app...')
-        ret = run_command(['./MyProgram'], project_starter_dir, config)
-        if ret:
-            raise Exception(f'Project starter execution failed (error code: {ret})')
-    
     else:
         trace.info(f'Skipping target: {target_config["desc"]} ...')
