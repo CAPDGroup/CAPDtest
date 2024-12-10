@@ -30,7 +30,7 @@ def __run_command_with_trace(
     ret = __run_command(args, cwd, dry_run)
     if ret:
         raise Exception(f'{error_message} (error code: {ret})')
-    
+
 
 def run_command(args : List[str], cwd : str, config : dict):
     if not config["dry_run"]:
@@ -57,6 +57,51 @@ def setup_workdir(config):
         trace.info(f'Workspace root: {workdir}')
 
 
+def execute_stage_library(
+    workspace_root : str,
+    remote_url : str,
+    local_url : str,
+    build_dir : str,
+    cmake_options : List[str],
+    jobs : int,
+    dry_run : bool):
+
+    __run_command_with_trace(
+        args=['git', 'clone', remote_url],
+        cwd=workspace_root,
+        dry_run=dry_run,
+        debug_message='Cloning repository...',
+        error_message='Cloning failed')
+    
+    __run_command_with_trace(
+        args=['cmake', '-S', local_url, '-B', build_dir, *cmake_options],
+        cwd=workspace_root,
+        dry_run=dry_run,
+        debug_message='Configuration...',
+        error_message='Configuration failed')
+
+    __run_command_with_trace(
+        args=['make', '-j', jobs],
+        cwd=build_dir,
+        dry_run=dry_run,
+        debug_message='Building...',
+        error_message='Building failed')
+
+    __run_command_with_trace(
+        args=['make', 'test', '-j', jobs],
+        cwd=build_dir,
+        dry_run=dry_run,
+        debug_message='Executing tests...',
+        error_message='Test execution failed')
+
+    __run_command_with_trace(
+        args=['make', 'install'],
+        cwd=build_dir,
+        dry_run=dry_run,
+        debug_message='Installation...',
+        error_message='Installation failed')
+
+
 def setup_library(config : dict):
 
     target_config = config["targets"]["CAPD"]
@@ -75,42 +120,14 @@ def setup_library(config : dict):
 
         trace.debug(f'CAPD installation path: {installdir}')
 
-        __run_command_with_trace(
-            args=['git', 'clone', remote_url],
-            cwd=workdir,
-            dry_run=dry_run,
-            debug_message='Cloning repository...',
-            error_message='Cloning failed')
-        
-        __run_command_with_trace(
-            args=['cmake', '-S', repodir, '-B', builddir,
-                    '-DCAPD_BUILD_ALL=ON',
-                    f'-DCMAKE_INSTALL_PREFIX={installdir}'],
-            cwd=workdir,
-            dry_run=dry_run,
-            debug_message='Configuration...',
-            error_message='Configuration failed')
-    
-        __run_command_with_trace(
-            args=['make', '-j', jobs],
-            cwd=builddir,
-            dry_run=dry_run,
-            debug_message='Building...',
-            error_message='Building failed')
-
-        __run_command_with_trace(
-            args=['make', 'test', '-j', jobs],
-            cwd=builddir,
-            dry_run=dry_run,
-            debug_message='Executing tests...',
-            error_message='Test execution failed')
-
-        __run_command_with_trace(
-            args=['make', 'install'],
-            cwd=builddir,
-            dry_run=dry_run,
-            debug_message='Installation...',
-            error_message='Installation failed')
+        execute_stage_library(
+            workspace_root=workdir,
+            remote_url=remote_url,
+            local_url=repodir,
+            build_dir=builddir,
+            cmake_options=['-DCAPD_BUILD_ALL=ON', f'-DCMAKE_INSTALL_PREFIX={installdir}'],
+            jobs=jobs,
+            dry_run=dry_run)
 
     else:
         trace.info(f'Skipping target: {target_config["desc"]} ...')
