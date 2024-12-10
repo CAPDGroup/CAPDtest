@@ -16,6 +16,9 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=config['logging_level'])
 
+    if config['dry_run']:
+        logging.info("Performing dry run...")
+
     workdir = config['root']
     capddir = f'{workdir}/{config["targets"]["CAPD"]["local_url"]}'
     builddir = f'{capddir}/{config["builddir"]}'
