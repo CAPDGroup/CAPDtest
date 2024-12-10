@@ -1,5 +1,5 @@
 {
-    "dry_run": true,
+    "dry_run": false,
     "logging_level": 20,
     "root": "workdir",
     "builddir": "build",
@@ -22,7 +22,7 @@
         },
         "CAPD_standard":
         {
-            "enabled": false,
+            "enabled": true,
             "desc": "CAPD example standard",
             "remote_url": "https://github.com/CAPDGroup/CAPD_example_standard",
             "local_url": "CAPD_example_standard"

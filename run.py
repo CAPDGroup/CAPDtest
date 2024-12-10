@@ -20,24 +20,12 @@ if __name__ == '__main__':
     if config['dry_run']:
         logging.info("Performing dry run...")
 
+    setup_workdir(config)
+    setup_library(config)
+    setup_example_1(config)
+    setup_example_2(config)
+
     workdir = os.path.abspath(config['root'])
     capddir = f'{workdir}/{config["targets"]["CAPD"]["local_url"]}'
-    builddir = f'{capddir}/{config["builddir"]}'
-    installdir = f'{workdir}/{config["installdir"]}'
-
-    setup_workdir(config)
-
-    setup_library(workdir, capddir, builddir, installdir, config)
-
-    exampledir = f'{workdir}/CAPD.example.1'
-    example_builddir = f'{exampledir}/build'
-
-    setup_example_1(workdir, exampledir, example_builddir, installdir, config)
-
-    example2_dir = f'{workdir}/CAPD.example.2'
-    example2_builddir = f'{example2_dir}/build'
-
-    setup_example_2(workdir, example2_dir, example2_builddir, config)
-
     project_starter_dir = f'{capddir}/capdMake/examples/projectStarter'
     setup_project_starter(project_starter_dir, config)

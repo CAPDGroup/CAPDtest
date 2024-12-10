@@ -31,12 +31,17 @@ def setup_workdir(config):
         trace.info(f'Workspace root: {workdir}')
 
 
-def setup_library(workdir, repodir, builddir, installdir, config : dict):
+def setup_library(config : dict):
 
     target_config = config["targets"]["CAPD"]
 
     if target_config['enabled']:
         trace.info(f'Building target: {target_config["desc"]} ...')
+
+        workdir = os.path.abspath(config['root'])
+        repodir = f'{workdir}/{target_config["local_url"]}'
+        builddir = f'{repodir}/{config["builddir"]}'
+        installdir = f'{workdir}/{config["installdir"]}'
                    
         trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
@@ -71,31 +76,41 @@ def setup_library(workdir, repodir, builddir, installdir, config : dict):
         trace.info(f'Skipping target: {target_config["desc"]} ...')
 
 
-def setup_example_1(workdir, repodir, builddir, installdir, config : dict):
+def setup_example_1(config : dict):
 
     target_config = config["targets"]["CAPD_standalone"]
 
     if target_config['enabled']:
         trace.info(f'Building target: {target_config["desc"]} ...')
 
+        workdir = os.path.abspath(config['root'])
+        repodir = f'{workdir}/{target_config["local_url"]}'
+        builddir = f'{repodir}/{config["builddir"]}'
+        installdir = f'{workdir}/{config["installdir"]}'
+
         trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
         ret = run_command(['git', 'clone', remote_url], workdir, config)
         if ret:
-            raise Exception(f'Failed to clone CAPD example 1 repository (error code: {ret})')
+            raise Exception(f'Failed to clone repository (error code: {ret})')
+        
+        trace.debug('Updating submodules...')
+        ret = run_command(['git', 'submodule', 'update', '--init', '--recursive'], repodir, config)
+        if ret:
+            raise Exception(f'Failed to update submodules (error code: {ret})')
 
-        trace.debug('Configuring the example 1...')
+        trace.debug('Configuring ...')
         ret = run_command(['cmake', '-S', repodir, '-B', builddir,
                             f'-DCMAKE_PREFIX_PATH={installdir}'], workdir, config)
         if ret:
             raise Exception(f'Failed to configure CAPD example 1 (error code: {ret})')
 
-        trace.debug('Building the example 1...')
+        trace.debug('Building ...')
         ret = run_command(['make', '-j', str(4)], builddir, config)
         if ret:
             raise Exception(f'Failed to build CAPD example 1 (error code: {ret})')
 
-        trace.debug('Executing example 1 app...')
+        trace.debug('Executing program ...')
         ret = run_command(['./capd_example'], builddir, config)
         if ret:
             raise Exception(f'CAPD example 1 execution failed (error code: {ret})')
@@ -104,12 +119,16 @@ def setup_example_1(workdir, repodir, builddir, installdir, config : dict):
         trace.info(f'Skipping target: {target_config["desc"]} ...')
 
 
-def setup_example_2(workdir, repodir, builddir, config : dict):
+def setup_example_2(config : dict):
 
     target_config = config["targets"]["CAPD_standard"]
 
     if target_config['enabled']:
         trace.info(f'Building target: {target_config["desc"]} ...')
+
+        workdir = os.path.abspath(config['root'])
+        repodir = f'{workdir}/{target_config["local_url"]}'
+        builddir = f'{repodir}/{config["builddir"]}'
 
         trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
@@ -122,7 +141,7 @@ def setup_example_2(workdir, repodir, builddir, config : dict):
         if ret:
             raise Exception(f'Failed to update git submodules for CAPD example 2 (error code: {ret})')
 
-        trace.debug('Executing example 2 app...')
+        trace.debug('Executing program ...')
         ret = run_command(['./capd_example'], builddir, config)
         if ret:
             raise Exception(f'CAPD example 2 execution failed (error code: {ret})')
@@ -131,7 +150,7 @@ def setup_example_2(workdir, repodir, builddir, config : dict):
         trace.info(f'Skipping target: {target_config["desc"]} ...')
 
 
-def setup_project_starter(repodir, config : dict):
+def setup_project_starter(project_starter_dir : str, config : dict):
 
     target_config = config["targets"]["CAPD_projectstarter"]
 
@@ -139,12 +158,12 @@ def setup_project_starter(repodir, config : dict):
         trace.info(f'Building target: {target_config["desc"]} ...')
 
         trace.debug('Building project starter...')
-        ret = run_command(['make'], repodir, config)
+        ret = run_command(['make'], project_starter_dir, config)
         if ret:
             raise Exception(f'Failed to build project starter (error code: {ret})')
         
         trace.debug('Executing project starter app...')
-        ret = run_command(['./MyProgram'], repodir, config)
+        ret = run_command(['./MyProgram'], project_starter_dir, config)
         if ret:
             raise Exception(f'Project starter execution failed (error code: {ret})')
     
