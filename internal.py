@@ -7,24 +7,31 @@ from typing import List
 trace = logging.getLogger(__file__)
 
 def run_command(args : List[str], workdir : str, config : dict):
-    if config["dry_run"]:
+    if not config["dry_run"]:
+        subprocess.call(args, cwd=workdir)
+    else:
         trace.info('Run command:\n' +
                    '\t' + ' '.join(args) + '\n' +
                    '\t' + f'from {workdir}\n')
+
+
+def setup_workdir(config):
+
+    workdir = os.path.abspath( config['root'] )
+    if not config["dry_run"]:
+        trace.debug(f'Does {workdir} already exist?')
+        if os.path.isdir(workdir):
+            trace.debug(f'Removing {workdir}')
+            shutil.rmtree(workdir)
+            trace.debug('Done.')
+        
+        trace.debug(f'Creating {workdir}')
+        os.mkdir(workdir)
     else:
-        subprocess.call(args, cwd=workdir)
+        trace.info(f'Workspace root: {workdir}')
 
 
 def setup_library(workdir, repodir, builddir, installdir, config : dict):
-
-    trace.debug(f'Does {workdir} already exist?')
-    if os.path.isdir(workdir):
-        trace.debug(f'Removing {workdir}')
-        shutil.rmtree(workdir)
-        trace.debug('Done.')
-
-    trace.debug(f'Creating {workdir}')
-    os.mkdir(workdir)
 
     trace.debug('Cloning CAPD repository...')
     ret = run_command(['git', 'clone', 'https://github.com/CAPDGroup/CAPD'], workdir, config)

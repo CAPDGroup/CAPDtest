@@ -2,6 +2,7 @@ import logging
 import os
 import json
 
+from internal import setup_workdir
 from internal import setup_library
 from internal import setup_example_1
 from internal import setup_example_2
@@ -23,6 +24,8 @@ if __name__ == '__main__':
     capddir = f'{workdir}/{config["targets"]["CAPD"]["local_url"]}'
     builddir = f'{capddir}/{config["builddir"]}'
     installdir = f'{workdir}/{config["installdir"]}'
+
+    setup_workdir(config)
 
     setup_library(workdir, capddir, builddir, installdir, config)
 
