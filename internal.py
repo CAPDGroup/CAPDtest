@@ -32,10 +32,12 @@ def __run_command_with_trace(
         raise Exception(f'{error_message} (error code: {ret})')
 
 
-def setup_workdir(config):
+def setup_workdir(
+        workspace_root : str,
+        dry_run : bool):
 
-    workdir = os.path.abspath( config['root'] )
-    if not config["dry_run"]:
+    workdir = os.path.abspath( workspace_root )
+    if not dry_run:
         trace.debug(f'Does {workdir} already exist?')
         if os.path.isdir(workdir):
             trace.debug(f'Removing {workdir}')
@@ -141,24 +143,17 @@ def execute_stage_executable(
 
 def setup_project_starter(project_starter_dir : str, config : dict):
 
-    target_config = config["targets"]["CAPD_projectstarter"]
+    __run_command_with_trace(
+        args=['make'],
+        cwd=project_starter_dir,
+        dry_run=config['dry_run'],
+        debug_message='Building project starter...',
+        error_message='Failed to build project starter')
 
-    if target_config['enabled']:
-        trace.info(f'Building target: {target_config["desc"]} ...')
-
-        __run_command_with_trace(
-            args=['make'],
-            cwd=project_starter_dir,
-            dry_run=config['dry_run'],
-            debug_message='Building project starter...',
-            error_message='Failed to build project starter')
-
-        __run_command_with_trace(
-            args=['./MyProgram'],
-            cwd=project_starter_dir,
-            dry_run=config['dry_run'],
-            debug_message='Executing project starter app...',
-            error_message='Project starter execution failed')
+    __run_command_with_trace(
+        args=['./MyProgram'],
+        cwd=project_starter_dir,
+        dry_run=config['dry_run'],
+        debug_message='Executing project starter app...',
+        error_message='Project starter execution failed')
         
-    else:
-        trace.info(f'Skipping target: {target_config["desc"]} ...')
