@@ -58,6 +58,9 @@ def execute_stage_library(
         cmake_options : List[str],
         jobs : int,
         dry_run : bool):
+    
+    local_path = f'{workspace_root}/{local_url}'
+    build_path = f'{local_path}/{build_dir}'
 
     __run_command_with_trace(
         args=['git', 'clone', remote_url],
@@ -67,7 +70,7 @@ def execute_stage_library(
         error_message='Cloning failed')
     
     __run_command_with_trace(
-        args=['cmake', '-S', local_url, '-B', build_dir, *cmake_options],
+        args=['cmake', '-S', local_path, '-B', build_path, *cmake_options],
         cwd=workspace_root,
         dry_run=dry_run,
         debug_message='Configuration...',
@@ -75,21 +78,21 @@ def execute_stage_library(
 
     __run_command_with_trace(
         args=['make', '-j', str(jobs)],
-        cwd=build_dir,
+        cwd=build_path,
         dry_run=dry_run,
         debug_message='Building...',
         error_message='Building failed')
 
     __run_command_with_trace(
         args=['make', 'test', '-j', str(jobs)],
-        cwd=build_dir,
+        cwd=build_path,
         dry_run=dry_run,
         debug_message='Executing tests...',
         error_message='Test execution failed')
 
     __run_command_with_trace(
         args=['make', 'install'],
-        cwd=build_dir,
+        cwd=build_path,
         dry_run=dry_run,
         debug_message='Installation...',
         error_message='Installation failed')
@@ -104,6 +107,9 @@ def execute_stage_executable(
         executable_args : List[str],
         jobs : int,
         dry_run : bool):
+    
+    local_path = f'{workspace_root}/{local_url}'
+    build_path = f'{local_path}/{build_dir}'
 
     __run_command_with_trace(
         args=['git', 'clone', remote_url],
@@ -120,7 +126,7 @@ def execute_stage_executable(
         error_message='Failed to update submodules')
 
     __run_command_with_trace(
-        args=['cmake', '-S', local_url, '-B', build_dir, *cmake_options],
+        args=['cmake', '-S', local_path, '-B', build_path, *cmake_options],
         cwd=workspace_root,
         dry_run=dry_run,
         debug_message='Configuration...',
@@ -128,14 +134,14 @@ def execute_stage_executable(
 
     __run_command_with_trace(
         args=['make', '-j', str(jobs)],
-        cwd=build_dir,
+        cwd=build_path,
         dry_run=dry_run,
         debug_message='Building...',
         error_message='Building failed')
     
     __run_command_with_trace(
         args=executable_args,
-        cwd=build_dir,
+        cwd=build_path,
         dry_run=dry_run,
         debug_message='Executing program...',
         error_message='Execution failed')
