@@ -81,14 +81,14 @@ def execute_stage_library(
         error_message='Configuration failed')
 
     __run_command_with_trace(
-        args=['make', '-j', jobs],
+        args=['make', '-j', str(jobs)],
         cwd=build_dir,
         dry_run=dry_run,
         debug_message='Building...',
         error_message='Building failed')
 
     __run_command_with_trace(
-        args=['make', 'test', '-j', jobs],
+        args=['make', 'test', '-j', str(jobs)],
         cwd=build_dir,
         dry_run=dry_run,
         debug_message='Executing tests...',
@@ -134,7 +134,7 @@ def execute_stage_executable(
         error_message='Configuration failed')
 
     __run_command_with_trace(
-        args=['make', '-j', jobs],
+        args=['make', '-j', str(jobs)],
         cwd=build_dir,
         dry_run=dry_run,
         debug_message='Building...',
