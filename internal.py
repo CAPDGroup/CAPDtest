@@ -147,19 +147,19 @@ def execute_stage_executable(
         error_message='Execution failed')
 
 
-def setup_project_starter(project_starter_dir : str, config : dict):
+def setup_project_starter(project_starter_dir : str, dry_run : bool):
 
     __run_command_with_trace(
         args=['make'],
         cwd=project_starter_dir,
-        dry_run=config['dry_run'],
+        dry_run=dry_run,
         debug_message='Building project starter...',
         error_message='Failed to build project starter')
 
     __run_command_with_trace(
         args=['./MyProgram'],
         cwd=project_starter_dir,
-        dry_run=config['dry_run'],
+        dry_run=dry_run,
         debug_message='Executing project starter app...',
         error_message='Project starter execution failed')
         

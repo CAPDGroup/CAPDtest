@@ -52,4 +52,4 @@ if __name__ == '__main__':
         dry_run=dry_run)
 
     project_starter_dir = f'{workspace_root}/CAPD/capdMake/examples/projectStarter'
-    setup_project_starter(project_starter_dir)
+    setup_project_starter(project_starter_dir, dry_run)
