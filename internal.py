@@ -5,7 +5,7 @@ import shutil
 
 trace = logging.getLogger(__file__)
 
-def setup_library(workdir, repodir, builddir, installdir):
+def setup_library(workdir, repodir, builddir, installdir, config : dict):
 
     trace.debug(f'Does {workdir} already exist?')
     if os.path.isdir(workdir):
@@ -45,7 +45,7 @@ def setup_library(workdir, repodir, builddir, installdir):
         raise Exception(f'CAPD installation failed (error code: {ret})')
 
 
-def setup_example_1(workdir, repodir, builddir, installdir):
+def setup_example_1(workdir, repodir, builddir, installdir, config : dict):
 
     trace.debug('Cloning CAPD example 1 repository...')
     ret = subprocess.call(['git', 'clone', 'https://github.com/CAPDGroup/CAPD.example.1'], cwd=workdir)
@@ -69,7 +69,7 @@ def setup_example_1(workdir, repodir, builddir, installdir):
         raise Exception(f'CAPD example 1 execution failed (error code: {ret})')
 
 
-def setup_example_2(workdir, repodir, builddir):
+def setup_example_2(workdir, repodir, builddir, config : dict):
 
     trace.debug('Cloning CAPD example 2 repository...')
     ret = subprocess.call(['git', 'clone', 'https://github.com/CAPDGroup/CAPD.example.2'], cwd=workdir)
@@ -87,7 +87,7 @@ def setup_example_2(workdir, repodir, builddir):
         raise Exception(f'CAPD example 2 execution failed (error code: {ret})')
 
 
-def setup_project_starter(repodir):
+def setup_project_starter(repodir, config : dict):
 
     trace.debug('Building project starter...')
     ret = subprocess.call(['make'], cwd=repodir)
