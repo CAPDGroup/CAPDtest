@@ -120,7 +120,7 @@ def execute_stage_executable(
     
     __run_command_with_trace(
         args=['git', 'submodule', 'update', '--init', '--recursive'],
-        cwd=workspace_root,
+        cwd=local_path,
         dry_run=dry_run,
         debug_message='Updating submodules...',
         error_message='Failed to update submodules')
