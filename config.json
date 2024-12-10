@@ -1,9 +1,10 @@
 {
-    "dry_run": false,
+    "dry_run": true,
     "logging_level": 20,
     "root": "workdir",
     "builddir": "build",
     "installdir": "CAPD_install",
+    "jobs": 3,
     "targets":
     {
         "CAPD":
