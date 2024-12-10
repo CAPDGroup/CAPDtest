@@ -2,22 +2,35 @@
     "dry_run": false,
     "logging_level": 10,
     "root": "workdir",
-    "capddir": "CAPD",
     "builddir": "build",
     "installdir": "CAPD_install",
     "targets":
     {
         "CAPD":
         {
+            "enabled": false,
             "desc": "CAPD library",
-            "remote_url": "",
-            "local_url": ""
+            "remote_url": "https://github.com/CAPDGroup/CAPD",
+            "local_url": "CAPD"
         },
         "CAPD_standalone":
-        {},
+        {
+            "enabled": false,
+            "desc": "CAPD example standalone",
+            "remote_url": "https://github.com/CAPDGroup/CAPD_example_standalone",
+            "local_url": "CAPD_example_standalone"
+        },
         "CAPD_standard":
-        {},
+        {
+            "enabled": false,
+            "desc": "CAPD example standard",
+            "remote_url": "https://github.com/CAPDGroup/CAPD_example_standard",
+            "local_url": "CAPD_example_standard"
+        },
         "CAPD_projectstarter":
-        {}
+        {
+            "enabled": false,
+            "desc": "Project starter"
+        }
     }
 }
