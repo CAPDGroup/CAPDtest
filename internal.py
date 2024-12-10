@@ -8,7 +8,9 @@ trace = logging.getLogger(__file__)
 
 def run_command(args : List[str], workdir : str, config : dict):
     if config["dry_run"]:
-        trace.info(' '.join(args))
+        trace.info('Run command:\n' +
+                   '\t' + ' '.join(args) + '\n' +
+                   '\t' + f'from {workdir}\n')
     else:
         subprocess.call(args, cwd=workdir)
 
