@@ -1,0 +1,23 @@
+{
+    "dry_run": false,
+    "logging_level": 10,
+    "root": "workdir",
+    "capddir": "CAPD",
+    "builddir": "build",
+    "installdir": "CAPD_install",
+    "targets":
+    {
+        "CAPD":
+        {
+            "desc": "CAPD library",
+            "remote_url": "",
+            "local_url": ""
+        },
+        "CAPD_standalone":
+        {},
+        "CAPD_standard":
+        {},
+        "CAPD_projectstarter":
+        {}
+    }
+}
