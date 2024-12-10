@@ -58,13 +58,13 @@ def setup_workdir(config):
 
 
 def execute_stage_library(
-    workspace_root : str,
-    remote_url : str,
-    local_url : str,
-    build_dir : str,
-    cmake_options : List[str],
-    jobs : int,
-    dry_run : bool):
+        workspace_root : str,
+        remote_url : str,
+        local_url : str,
+        build_dir : str,
+        cmake_options : List[str],
+        jobs : int,
+        dry_run : bool):
 
     __run_command_with_trace(
         args=['git', 'clone', remote_url],
@@ -100,6 +100,52 @@ def execute_stage_library(
         dry_run=dry_run,
         debug_message='Installation...',
         error_message='Installation failed')
+
+
+def execute_stage_executable(
+        workspace_root : str,
+        remote_url : str,
+        local_url : str,
+        build_dir : str,
+        cmake_options : List[str],
+        executable_args : List[str],
+        jobs : int,
+        dry_run : bool):
+
+    __run_command_with_trace(
+        args=['git', 'clone', remote_url],
+        cwd=workspace_root,
+        dry_run=dry_run,
+        debug_message='Cloning repository...',
+        error_message='Cloning failed')
+    
+    __run_command_with_trace(
+        args=['git', 'submodule', 'update', '--init', '--recursive'],
+        cwd=workspace_root,
+        dry_run=dry_run,
+        debug_message='Updating submodules...',
+        error_message='Failed to update submodules')
+
+    __run_command_with_trace(
+        args=['cmake', '-S', local_url, '-B', build_dir, *cmake_options],
+        cwd=workspace_root,
+        dry_run=dry_run,
+        debug_message='Configuration...',
+        error_message='Configuration failed')
+
+    __run_command_with_trace(
+        args=['make', '-j', jobs],
+        cwd=build_dir,
+        dry_run=dry_run,
+        debug_message='Building...',
+        error_message='Building failed')
+    
+    __run_command_with_trace(
+        args=executable_args,
+        cwd=build_dir,
+        dry_run=dry_run,
+        debug_message='Executing program...',
+        error_message='Execution failed')
 
 
 def setup_library(config : dict):
@@ -144,32 +190,19 @@ def setup_example_1(config : dict):
         repodir = f'{workdir}/{target_config["local_url"]}'
         builddir = f'{repodir}/{config["builddir"]}'
         jobs = str(config["jobs"])
+        dry_run = config['dry_run']
 
-        trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
-        ret = run_command(['git', 'clone', remote_url], workdir, config)
-        if ret:
-            raise Exception(f'Cloning failed (error code: {ret})')
-        
-        trace.debug('Updating submodules...')
-        ret = run_command(['git', 'submodule', 'update', '--init', '--recursive'], repodir, config)
-        if ret:
-            raise Exception(f'Failed to update submodules (error code: {ret})')
 
-        trace.debug('Configuring ...')
-        ret = run_command(['cmake', '-S', repodir, '-B', builddir], workdir, config)
-        if ret:
-            raise Exception(f'Configuration failed (error code: {ret})')
-
-        trace.debug('Building ...')
-        ret = run_command(['make', '-j', jobs], builddir, config)
-        if ret:
-            raise Exception(f'Build failed (error code: {ret})')
-
-        trace.debug('Executing program ...')
-        ret = run_command(['./capd_example'], builddir, config)
-        if ret:
-            raise Exception(f'Execution failed (error code: {ret})')
+        execute_stage_executable(
+            workspace_root=workdir,
+            remote_url=remote_url,
+            local_url=repodir,
+            build_dir=builddir,
+            cmake_options=[],
+            executable_args=['./capd_example'],
+            jobs=jobs,
+            dry_run=dry_run)
 
     else:
         trace.info(f'Skipping target: {target_config["desc"]} ...')
@@ -187,28 +220,19 @@ def setup_example_2(config : dict):
         builddir = f'{repodir}/{config["builddir"]}'
         installdir = f'{workdir}/{config["installdir"]}'
         jobs = str(config["jobs"])
+        dry_run = config['dry_run']
 
-        trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
-        ret = run_command(['git', 'clone', remote_url], workdir, config)
-        if ret:
-            raise Exception(f'Cloning failed (error code: {ret})')
         
-        trace.debug('Configuring ...')
-        ret = run_command(['cmake', '-S', repodir, '-B', builddir,
-                            f'-DCMAKE_PREFIX_PATH={installdir}'], workdir, config)
-        if ret:
-            raise Exception(f'Configuration failed (error code: {ret})')
-
-        trace.debug('Building ...')
-        ret = run_command(['make', '-j', jobs], builddir, config)
-        if ret:
-            raise Exception(f'Build failed (error code: {ret})')
-
-        trace.debug('Executing program ...')
-        ret = run_command(['./capd_example'], builddir, config)
-        if ret:
-            raise Exception(f'Execution failed (error code: {ret})')
+        execute_stage_executable(
+            workspace_root=workdir,
+            remote_url=remote_url,
+            local_url=repodir,
+            build_dir=builddir,
+            cmake_options=[f'-DCMAKE_PREFIX_PATH={installdir}'],
+            executable_args=['./capd_example'],
+            jobs=jobs,
+            dry_run=dry_run)
     
     else:
         trace.info(f'Skipping target: {target_config["desc"]} ...')
