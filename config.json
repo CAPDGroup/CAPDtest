@@ -1,6 +1,6 @@
 {
     "dry_run": true,
-    "logging_level": 10,
+    "logging_level": 20,
     "root": "workdir",
     "builddir": "build",
     "installdir": "CAPD_install",
@@ -8,7 +8,7 @@
     {
         "CAPD":
         {
-            "enabled": false,
+            "enabled": true,
             "desc": "CAPD library",
             "remote_url": "https://github.com/CAPDGroup/CAPD",
             "local_url": "CAPD"
