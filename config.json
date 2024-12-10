@@ -4,6 +4,7 @@
     "root": "workdir",
     "builddir": "build",
     "installdir": "CAPD_install",
+    "jobs": 3,
     "targets":
     {
         "CAPD":

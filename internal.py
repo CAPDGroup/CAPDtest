@@ -42,6 +42,7 @@ def setup_library(config : dict):
         repodir = f'{workdir}/{target_config["local_url"]}'
         builddir = f'{repodir}/{config["builddir"]}'
         installdir = f'{workdir}/{config["installdir"]}'
+        jobs = str(config["jobs"])
                    
         trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
@@ -58,12 +59,12 @@ def setup_library(config : dict):
             raise Exception(f'Failed to configure CAPD library (error code: {ret})')
 
         trace.debug('Building the library...')
-        ret = run_command(['make', '-j', str(4)], builddir, config)
+        ret = run_command(['make', '-j', jobs], builddir, config)
         if ret:
             raise Exception(f'Configuration failed (error code: {ret})')
 
         trace.debug('Executing test cases...')
-        ret = run_command(['make', 'test', '-j', str(4)], builddir, config)
+        ret = run_command(['make', 'test', '-j', jobs], builddir, config)
         if ret:
             raise Exception(f'Build failed (error code: {ret})')
 
@@ -86,7 +87,7 @@ def setup_example_1(config : dict):
         workdir = os.path.abspath(config['root'])
         repodir = f'{workdir}/{target_config["local_url"]}'
         builddir = f'{repodir}/{config["builddir"]}'
-        installdir = f'{workdir}/{config["installdir"]}'
+        jobs = str(config["jobs"])
 
         trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
@@ -105,7 +106,7 @@ def setup_example_1(config : dict):
             raise Exception(f'Configuration failed (error code: {ret})')
 
         trace.debug('Building ...')
-        ret = run_command(['make', '-j', str(4)], builddir, config)
+        ret = run_command(['make', '-j', jobs], builddir, config)
         if ret:
             raise Exception(f'Build failed (error code: {ret})')
 
@@ -129,6 +130,7 @@ def setup_example_2(config : dict):
         repodir = f'{workdir}/{target_config["local_url"]}'
         builddir = f'{repodir}/{config["builddir"]}'
         installdir = f'{workdir}/{config["installdir"]}'
+        jobs = str(config["jobs"])
 
         trace.debug('Cloning repository...')
         remote_url = target_config["remote_url"]
@@ -143,7 +145,7 @@ def setup_example_2(config : dict):
             raise Exception(f'Configuration failed (error code: {ret})')
 
         trace.debug('Building ...')
-        ret = run_command(['make', '-j', str(4)], builddir, config)
+        ret = run_command(['make', '-j', jobs], builddir, config)
         if ret:
             raise Exception(f'Build failed (error code: {ret})')
 
