@@ -19,10 +19,10 @@ if __name__ == '__main__':
     if config['dry_run']:
         logging.info("Performing dry run...")
 
-    workdir = config['root']
+    workdir = os.path.abspath(config['root'])
     capddir = f'{workdir}/{config["targets"]["CAPD"]["local_url"]}'
     builddir = f'{capddir}/{config["builddir"]}'
-    installdir = os.path.abspath(f'{workdir}/{config["installdir"]}')
+    installdir = f'{workdir}/{config["installdir"]}'
 
     setup_library(workdir, capddir, builddir, installdir, config)
 
