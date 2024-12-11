@@ -34,18 +34,31 @@ def __run_command_with_trace(
 
 def setup_workdir(
         workspace_root : str,
-        dry_run : bool):
+        dry_run : bool,
+        incremental_run : bool):
 
+    if type(dry_run) != bool:
+        raise Exception("Unexpected dry_run parameter type!")
+    
+    if type(incremental_run) != bool:
+        raise Exception("Unexpected incremental_run parameter type!")
+    
     workdir = os.path.abspath( workspace_root )
     if not dry_run:
-        trace.debug(f'Does {workdir} already exist?')
-        if os.path.isdir(workdir):
-            trace.debug(f'Removing {workdir}')
-            shutil.rmtree(workdir)
-            trace.debug('Done.')
-        
-        trace.debug(f'Creating {workdir}')
-        os.mkdir(workdir)
+        if not incremental_run:
+            trace.debug(f'Does {workdir} already exist?')
+            if os.path.isdir(workdir):
+                trace.debug(f'Removing {workdir}')
+                shutil.rmtree(workdir)
+                trace.debug('Done.')
+            
+            trace.debug(f'Creating {workdir}')
+            os.mkdir(workdir)
+        else:
+            trace.debug(f'Does {workdir} already exist?')
+            if not os.path.isdir(workdir):
+                trace.debug(f'Creating {workdir}')
+                os.mkdir(workdir)
     else:
         trace.info(f'Workspace root: {workdir}')
 

@@ -12,6 +12,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     dry_run = True
+    incremental_run = True
     workspace_root = os.path.abspath('./workdir')
     build_dir = 'build'
     install_dir = f'{workspace_root}/CAPD_install'
@@ -20,7 +21,7 @@ if __name__ == '__main__':
     if dry_run:
         logging.info("Performing dry run...")
 
-    setup_workdir(workspace_root, dry_run)
+    setup_workdir(workspace_root, dry_run, incremental_run)
 
     execute_stage_library(
         workspace_root=workspace_root,
