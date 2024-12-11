@@ -19,7 +19,7 @@ def __run_command(args : List[str], cwd : str, dry_run : bool):
                    '\t' + f'cwd={cwd}\n')
 
 
-def __run_command_with_trace(
+def run_command_with_trace(
         args : List[str],
         cwd : str,
         dry_run : bool,
@@ -75,35 +75,35 @@ def execute_stage_library(
     local_path = f'{workspace_root}/{local_dir}'
     build_path = f'{local_path}/{build_dir}'
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['git', 'clone', remote_url],
         cwd=workspace_root,
         dry_run=dry_run,
         debug_message='Cloning repository...',
         error_message='Cloning failed')
     
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['cmake', '-S', local_path, '-B', build_path, *cmake_options],
         cwd=workspace_root,
         dry_run=dry_run,
         debug_message='Configuration...',
         error_message='Configuration failed')
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['make', '-j', str(jobs)],
         cwd=build_path,
         dry_run=dry_run,
         debug_message='Building...',
         error_message='Building failed')
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['make', 'test', '-j', str(jobs)],
         cwd=build_path,
         dry_run=dry_run,
         debug_message='Executing tests...',
         error_message='Test execution failed')
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['make', 'install'],
         cwd=build_path,
         dry_run=dry_run,
@@ -124,55 +124,37 @@ def execute_stage_executable(
     local_path = f'{workspace_root}/{local_dir}'
     build_path = f'{local_path}/{build_dir}'
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['git', 'clone', remote_url],
         cwd=workspace_root,
         dry_run=dry_run,
         debug_message='Cloning repository...',
         error_message='Cloning failed')
     
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['git', 'submodule', 'update', '--init', '--recursive'],
         cwd=local_path,
         dry_run=dry_run,
         debug_message='Updating submodules...',
         error_message='Failed to update submodules')
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['cmake', '-S', local_path, '-B', build_path, *cmake_options],
         cwd=workspace_root,
         dry_run=dry_run,
         debug_message='Configuration...',
         error_message='Configuration failed')
 
-    __run_command_with_trace(
+    run_command_with_trace(
         args=['make', '-j', str(jobs)],
         cwd=build_path,
         dry_run=dry_run,
         debug_message='Building...',
         error_message='Building failed')
     
-    __run_command_with_trace(
+    run_command_with_trace(
         args=executable_args,
         cwd=build_path,
         dry_run=dry_run,
         debug_message='Executing program...',
         error_message='Execution failed')
-
-
-def setup_project_starter(project_starter_dir : str, dry_run : bool):
-
-    __run_command_with_trace(
-        args=['make'],
-        cwd=project_starter_dir,
-        dry_run=dry_run,
-        debug_message='Building project starter...',
-        error_message='Failed to build project starter')
-
-    __run_command_with_trace(
-        args=['./MyProgram'],
-        cwd=project_starter_dir,
-        dry_run=dry_run,
-        debug_message='Executing project starter app...',
-        error_message='Project starter execution failed')
-        
