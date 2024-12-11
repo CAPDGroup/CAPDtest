@@ -53,13 +53,13 @@ def setup_workdir(
 def execute_stage_library(
         workspace_root : str,
         remote_url : str,
-        local_url : str,
+        local_dir : str,
         build_dir : str,
         cmake_options : List[str],
         jobs : int,
         dry_run : bool):
     
-    local_path = f'{workspace_root}/{local_url}'
+    local_path = f'{workspace_root}/{local_dir}'
     build_path = f'{local_path}/{build_dir}'
 
     __run_command_with_trace(
@@ -101,14 +101,14 @@ def execute_stage_library(
 def execute_stage_executable(
         workspace_root : str,
         remote_url : str,
-        local_url : str,
+        local_dir : str,
         build_dir : str,
         cmake_options : List[str],
         executable_args : List[str],
         jobs : int,
         dry_run : bool):
     
-    local_path = f'{workspace_root}/{local_url}'
+    local_path = f'{workspace_root}/{local_dir}'
     build_path = f'{local_path}/{build_dir}'
 
     __run_command_with_trace(
