@@ -14,7 +14,7 @@ if __name__ == '__main__':
     dry_run = True
     workspace_root = os.path.abspath('./workdir')
     build_dir = 'build'
-    install_dir = 'CAPD_install'
+    install_dir = f'{workspace_root}/CAPD_install'
     jobs = 3
 
     if dry_run:
