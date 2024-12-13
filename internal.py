@@ -6,13 +6,13 @@ from typing import List
 
 trace = logging.getLogger(__file__)
 
-def __run_command(args : List[str], cwd : str, dry_run : bool):
+def __run_command(args : List[str], cwd : str, dry_run : bool, env=None):
 
     if type(dry_run) is not bool:
         raise Exception("Unexpected dry_run test!")
 
     if not dry_run:
-        subprocess.call(args, cwd=cwd)
+        subprocess.call(args, cwd=cwd, env=env)
     else:
         trace.info('Run command:\n' +
                    '\t' + ' '.join(args) + '\n' +
@@ -24,10 +24,11 @@ def run_command_with_trace(
         cwd : str,
         dry_run : bool,
         debug_message : str,
-        error_message : str):
+        error_message : str,
+        env=None):
     
     trace.debug(debug_message)
-    ret = __run_command(args, cwd, dry_run)
+    ret = __run_command(args, cwd, dry_run, env)
     if ret:
         raise Exception(f'{error_message} (error code: {ret})')
 
