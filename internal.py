@@ -159,3 +159,28 @@ def execute_stage_executable(
         dry_run=dry_run,
         debug_message='Executing program...',
         error_message='Execution failed')
+
+
+def process_file_line_by_line(path : str, parser):
+    file_tmp = path + '.tmp'
+    with open(path, 'r', newline='') as ifs:
+        with open(file_tmp, 'w', newline='') as ofs:
+
+            try:
+                while True:
+                    line = ifs.readline()
+
+                    line = parser(line)
+
+                    if line == '':
+                        break
+
+                    ofs.write(line)
+            except Exception as e:
+                print(e)
+    
+    status = os.stat(path)
+    permissions = status.st_mode & 0o777
+    os.remove(path)
+    os.rename(file_tmp, path)
+    os.chmod(path, permissions)

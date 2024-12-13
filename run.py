@@ -1,11 +1,11 @@
 import logging
 import os
-import subprocess
 
 from internal import run_command_with_trace
 from internal import setup_workdir
 from internal import execute_stage_executable
 from internal import execute_stage_library
+from internal import process_file_line_by_line
 
 def setup_project_starter_internal(
         project_starter_dir : str,
@@ -31,31 +31,6 @@ def setup_project_starter_internal(
         dry_run=dry_run,
         debug_message='Executing project starter app...',
         error_message='Project starter execution failed')
-
-
-def process_file_line_by_line(path : str, parser):
-    file_tmp = path + '.tmp'
-    with open(path, 'r', newline='') as ifs:
-        with open(file_tmp, 'w', newline='') as ofs:
-
-            try:
-                while True:
-                    line = ifs.readline()
-
-                    line = parser(line)
-
-                    if line == '':
-                        break
-
-                    ofs.write(line)
-            except Exception as e:
-                print(e)
-    
-    status = os.stat(path)
-    permissions = status.st_mode & 0o777
-    os.remove(path)
-    os.rename(file_tmp, path)
-    os.chmod(path, permissions)
 
 
 def comment_out_capddir_line(path : str):
@@ -133,7 +108,7 @@ if __name__ == '__main__':
         remote_url='https://github.com/CAPDGroup/CAPD',
         local_dir='CAPD',
         build_dir=build_dir,
-        cmake_options=['-DCAPD_BUILD_ALL=OFF', f'-DCMAKE_INSTALL_PREFIX={install_dir}'],
+        cmake_options=['-DCAPD_BUILD_ALL=ON', f'-DCMAKE_INSTALL_PREFIX={install_dir}'],
         jobs=jobs,
         dry_run=dry_run)
     
