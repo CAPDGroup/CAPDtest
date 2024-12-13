@@ -106,6 +106,7 @@ if __name__ == '__main__':
     execute_stage_library(
         workspace_root=workspace_root,
         remote_url='https://github.com/CAPDGroup/CAPD',
+        branch='master',
         local_dir='CAPD',
         build_dir=build_dir,
         cmake_options=['-DCAPD_BUILD_ALL=ON', f'-DCMAKE_INSTALL_PREFIX={install_dir}'],
@@ -116,6 +117,7 @@ if __name__ == '__main__':
         execute_stage_executable(
             workspace_root=workspace_root,
             remote_url='https://github.com/CAPDGroup/CAPD_example_standalone',
+            branch='master',
             local_dir='CAPD_example_standalone',
             build_dir=build_dir,
             cmake_options=[],
@@ -127,6 +129,7 @@ if __name__ == '__main__':
         execute_stage_executable(
             workspace_root=workspace_root,
             remote_url='https://github.com/CAPDGroup/CAPD_example_standard',
+            branch='master',
             local_dir='CAPD_example_standard',
             build_dir=build_dir,
             cmake_options=[f'-DCMAKE_PREFIX_PATH={install_dir}'],

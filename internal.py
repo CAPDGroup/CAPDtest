@@ -67,6 +67,7 @@ def setup_workdir(
 def execute_stage_library(
         workspace_root : str,
         remote_url : str,
+        branch : str,
         local_dir : str,
         build_dir : str,
         cmake_options : List[str],
@@ -82,6 +83,13 @@ def execute_stage_library(
         dry_run=dry_run,
         debug_message='Cloning repository...',
         error_message='Cloning failed')
+    
+    run_command_with_trace(
+        args=['git', 'checkout', branch],
+        cwd=local_path,
+        dry_run=dry_run,
+        debug_message=f'Checking out branch {branch} ...',
+        error_message='Branch checkout failed')
     
     run_command_with_trace(
         args=['cmake', '-S', local_path, '-B', build_path, *cmake_options],
@@ -115,6 +123,7 @@ def execute_stage_library(
 def execute_stage_executable(
         workspace_root : str,
         remote_url : str,
+        branch : str,
         local_dir : str,
         build_dir : str,
         cmake_options : List[str],
@@ -131,6 +140,13 @@ def execute_stage_executable(
         dry_run=dry_run,
         debug_message='Cloning repository...',
         error_message='Cloning failed')
+    
+    run_command_with_trace(
+        args=['git', 'checkout', branch],
+        cwd=local_path,
+        dry_run=dry_run,
+        debug_message=f'Checking out branch {branch} ...',
+        error_message='Branch checkout failed')
     
     run_command_with_trace(
         args=['git', 'submodule', 'update', '--init', '--recursive'],
