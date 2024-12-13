@@ -32,8 +32,8 @@ def setup_project_starter_internal(
         debug_message='Executing project starter app...',
         error_message='Project starter execution failed')
 
-        
-def comment_out_capddir_line(path : str):
+
+def process_file_line_by_line(path : str, parser):
     file_tmp = path + '.tmp'
     with open(path, 'r', newline='') as ifs:
         with open(file_tmp, 'w', newline='') as ofs:
@@ -42,8 +42,7 @@ def comment_out_capddir_line(path : str):
                 while True:
                     line = ifs.readline()
 
-                    if line.startswith('CAPDBINDIR'):
-                        line = '# ' + line
+                    line = parser(line)
 
                     if line == '':
                         break
@@ -57,6 +56,17 @@ def comment_out_capddir_line(path : str):
     os.remove(path)
     os.rename(file_tmp, path)
     os.chmod(path, permissions)
+
+
+def comment_out_capddir_line(path : str):
+
+    def parser(line : str):
+        if line.startswith('CAPDBINDIR'):
+            return '# ' + line
+        else:
+            return line
+    
+    process_file_line_by_line(path, parser)
 
 
 def setup_project_starter_external(
