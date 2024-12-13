@@ -16,7 +16,7 @@ if __name__ == '__main__':
     workspace_root = os.path.abspath('./workdir')
     build_dir = 'build'
     install_dir = f'{workspace_root}/CAPD_install'
-    jobs = 3
+    jobs = 16
 
     if dry_run:
         logging.info("Performing dry run...")
@@ -33,7 +33,7 @@ if __name__ == '__main__':
         jobs=jobs,
         dry_run=dry_run)
     
-    if False:
+    if True:
         execute_stage_executable(
             workspace_root=workspace_root,
             remote_url='https://github.com/CAPDGroup/CAPD_example_standalone',
@@ -45,7 +45,7 @@ if __name__ == '__main__':
             jobs=jobs,
             dry_run=dry_run)
 
-    if False:
+    if True:
         execute_stage_executable(
             workspace_root=workspace_root,
             remote_url='https://github.com/CAPDGroup/CAPD_example_standard',
